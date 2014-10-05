@@ -77,7 +77,7 @@ function runMenu(mChoices, sMenuTitle)
 				elseif nKey == 28 then
 					if mChoices[nSelection] then
 						bLoop = false
-return nSelection
+						return nSelection
 					end
 				end
 			end
@@ -158,44 +158,44 @@ return nSelection
 					            local nSelection = runMenu(mChoices, "Security Preface:")
 					            mActions[nSelection]()
 					        elseif nMenuNum == "2a" then
-d            mChoices = {}
-d            mActions = {}
-d            mChoices[0] = "Install"
-d            mChoices[1] = " "
-d            mChoices[2] = "Skip"
-d            mChoices[3] = " "
-d            mChoices[4] = "Return"
-d            mActions[0] = function() nMenuNum = 3 bLogPref = true end
-d            mActions[2] = function() nMenuNum = 3 bLogPref = false end
-d            mActions[4] = function() nMenuNum = 1 end
-d            tempNum = nMenuNum
-d            local nSelection = runMenu(mChoices, "Security Preface:")
-d            mActions[nSelection]()
-d        elseif nMenuNum == "2b" and no ~= true then
-d            mChoices = {}
-d            mActions = {}
-d            mChoices[0] = "n/a"
-d            mChoices[1] = " "
-d            mChoices[2] = "Cancel Setup"
-d            mChoices[3] = " "
-d            mChoices[4] = "Return"
-d            mActions[0] = function() bMenuLoop = false end
-d            mActions[2] = function()
-dterm.clear()
-dlocal x = getCenterX("Cancelling Installation")
-dlocal y = getCenterY()
-dterm.setCursorPos(x, y)
-dterm.write("Cancelling Installation")
-dlocal x = getCenterX("Please wait...")
-dterm.setCursorPos(x, y + 1)
-dterm.write("Please wait...")
-dlocal nWidth, nHeight = term.getSize()
-dlocal y = nHeight
-dlocal x = getRight("LNET Technologies")
-dterm.setCursorPos(x, y)
-dterm.write("LNET Technologies")
-dsleep(3)
-dos.shutdown()
+            mChoices = {}
+            mActions = {}
+            mChoices[0] = "Install"
+            mChoices[1] = " "
+            mChoices[2] = "Skip"
+            mChoices[3] = " "
+            mChoices[4] = "Return"
+            mActions[0] = function() nMenuNum = 3 bLogPref = true end
+            mActions[2] = function() nMenuNum = 3 bLogPref = false end
+            mActions[4] = function() nMenuNum = 1 end
+            tempNum = nMenuNum
+            local nSelection = runMenu(mChoices, "Security Preface:")
+            mActions[nSelection]()
+        elseif nMenuNum == "2b" and no ~= true then
+            mChoices = {}
+            mActions = {}
+            mChoices[0] = "n/a"
+            mChoices[1] = " "
+            mChoices[2] = "Cancel Setup"
+            mChoices[3] = " "
+            mChoices[4] = "Return"
+            mActions[0] = function() bMenuLoop = false end
+            mActions[2] = function()
+term.clear()
+local x = getCenterX("Cancelling Installation")
+local y = getCenterY()
+term.setCursorPos(x, y)
+term.write("Cancelling Installation")
+local x = getCenterX("Please wait...")
+term.setCursorPos(x, y + 1)
+term.write("Please wait...")
+local nWidth, nHeight = term.getSize()
+local y = nHeight
+local x = getRight("LNET Technologies")
+term.setCursorPos(x, y)
+term.write("LNET Technologies")
+sleep(3)
+os.shutdown()
 						            end
 						            mActions[4] = function() nMenuNum = 1 end
 						            local nSelection = runMenu(mChoices, "Security Preface:")
