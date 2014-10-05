@@ -1,0 +1,223 @@
+os.loadAPI("/LNEX/Client-DB/APIS/ip")
+ 
+ 
+function os.pullEvent()
+    local cEvent, p1, p2, p3, p4, p5 = os.pullEventRaw()
+        if cEvent == "terminate" then
+        end
+    return cEvent, p1, p2, p3, p4, p5
+end
+ 
+file = io.open("/LNEX/Client-DB/connect-info/id" , "r")
+ci = file:read()
+file:close()
+cs = tonumber(ci)
+ 
+ 
+function getCenterX(sText)
+local nWidth = term.getSize()
+local x = math.floor(nWidth / 2) - math.floor(string.len(sText) / 2)
+return x
+end
+ 
+function getCenterY()
+    local nWidth, nHeight = term.getSize()
+    local y = math.floor(nHeight / 2)
+    return y
+end
+ 
+function getRight(sText)
+    local nWidth = term.getSize()
+    local x = nWidth - string.len(sText)
+    return x + 1
+end
+ 
+function genPass(pass)
+            ps = tostring(pass)
+            if rednet.send(cs , "$-*") == false then
+                term.clear()
+                term.setCursorPos(1,1)
+                print("Server communication error")
+                os.pullEvent("key")
+            end
+            local p1, p2 = rednet.receive()
+            if p2 == "get" then
+                rednet.send(cs , ps)
+                local p1, p2 = rednet.receive()
+                if p2 == "success" then
+                    return true
+                else
+                    return false
+                end
+            end
+end
+ 
+function accexists()
+    if rednet.send(cs , "is") == false then
+        print("Load")
+        term.clear()
+        term.setCursorPos(1,1)
+        print("Server communication error")
+        os.pullEvent("key")
+    end
+    local w1, w2 = rednet.receive()
+    if w2 == "true" then
+        return true
+    elseif w2 == "false" then
+        return false
+    end
+end
+ 
+function runMenu(mChoices, sMenuTitle, gvar)
+    term.setTextColor(colors.yellow)
+    local nSelection = 0
+    local bLoop = true
+     
+    while bLoop do
+        term.clear()
+        term.setCursorPos(1, 1)
+        print(sMenuTitle)
+        print()
+         
+        for nLine = 0, #mChoices do
+            local sLine = "  "
+            if nSelection == nLine then
+                sLine = ">  "
+            end
+            sLine = sLine .. mChoices[nLine]
+            print(sLine)
+        end
+         
+        local nWidth, nHeight = term.getSize()
+        local y = nHeight
+        local x = getRight("LNET Technologies")
+        term.setCursorPos(x, y)
+        term.write("LNET Technologies")
+         
+        event , p1 ,p2, p3 = os.pullEvent()
+        if event == "mouse_click" then --Mouse is clicked
+         
+            if ip.isClicked(p2,p3,"mchoice[0]",2,3) == true then
+                bLoop = false
+                return 0
+            end
+            if ip.isClicked(p2,p3,"mchoice[2]",2,5) == true then
+                bLoop = false
+                return 2    
+            end
+            if ip.isClicked(p2,p3,"mchoice[4]",2,7) == true then
+                bLoop = false
+                return 4
+            end
+            if ip.isClicked(p2,p3,"mchoice[4]",2,9) == true then
+                bLoop = false
+                return 6
+            end
+        elseif event == "key" then      --Keys are pressed
+            if p1 == 200 then
+                if mChoices[nSelection - 2] then
+                    nSelection = nSelection - 2
+                end
+            elseif p1 == 208 then
+                if mChoices[nSelection + 2] then
+                    nSelection = nSelection + 2
+                end
+            elseif p1 == 28 then
+                if mChoices[nSelection] then
+                    bLoop = false
+                    return nSelection
+                end
+            end
+        end
+    end
+end
+ 
+function menu()
+    repeat
+        if nMenuNum == 0 then
+            mChoices = {}
+            mActions = {}
+            mChoices[0] = "Login"  
+            mChoices[1] = " "
+            if not accexists() == true then
+                mChoices[2] = "Create Account"
+                mChoices[3] = " "
+                mChoices[4] = "Shutdown"
+                mChoices[5] = " "
+                mChoices[6] = "Reboot"
+                mActions[0] = function()
+                    bMenuLoop = false
+                    term.clear()
+                    print("Running LNEX")
+                    sleep(.5)
+                    shell.run("/LNEX/Client-DB/Client/LNEX") 
+                end
+                mActions[2] = function() nMenuNum = 1 end  
+                mActions[4] = function()
+                    term.clear()
+                    os.shutdown()
+                end
+                mActions[6] = function()
+                    term.clear()
+                    os.reboot()
+                end
+                local nSelection = runMenu(mChoices, "LNEX Security Preface","y")
+                mActions[nSelection]()
+            else
+                mChoices[2] = "Shutdown"
+                mChoices[3] = " "
+                mChoices[4] = "Reboot"
+                mActions[0] = function() 
+                                bMenuLoop = false
+                                shell.run("/LNEX/Client-DB/Client/LNEX") 
+                              end
+                mActions[2] = function()
+                    term.clear()
+                    os.shutdown()
+                end
+                mActions[4] = function()
+                    term.clear()
+                    os.reboot()
+                end
+                local nSelection = runMenu(mChoices, "LNEX Security Preface","n")
+                mActions[nSelection]()
+            end
+        elseif nMenuNum == 1 then
+                term.clear()
+                local nWidth, nHeight = term.getSize()
+                local y = nHeight
+                local x = getRight("LNET Technologies")
+                term.setCursorPos(x, y)
+                term.write("LNET Technologies")
+                term.setCursorPos(1,1)
+                write("New Password:")
+                ino = read("*")
+                write("Confirm:")
+                inc = read("*")
+                if ino == inc then
+                    if genPass(ino) == true then
+                        sleep(1)
+                        write("Account Creation Status: Complete!")
+                        sleep(4)
+                    elseif genPass(ino) == false then
+                        sleep(1)
+                        write("Account Creation Status: Failed!")
+                        sleep(4)
+                    end
+                else
+                    term.setTextColor(colors.red)
+                    write("Passwords do not match!")
+                    sleep(3)
+                end
+                os.reboot()
+        end
+    until bMenuLoop == false
+end
+ 
+ 
+sleep(.5)
+bMenuLoop = true
+nMenuNum = 0
+tChoices = {}
+tActions = {}
+menu()
