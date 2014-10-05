@@ -1,0 +1,399 @@
+sVersion = nil
+  
+if fs.exists("/LNEX/Client-DB") then
+    sVersion = "Client-DB"
+elseif fs.exists("/LNEX/Client-SA") then
+    sVersion = "Client-SA"
+end
+  
+if not fs.exists("/LNEX") and not http then
+    error("Please enabled HTTP API to continue!")
+elseif not fs.exists("/LNEX") and http then
+    if not fs.exists("/APIS") then
+        fs.makeDir("/APIS")
+    end
+    if fs.exists("/APIS/fidx") then
+        os.loadAPI("/APIS/fidx")
+    else
+        http.request("http://mmbsite.uphero.com/phpScript/update.php?id=1")
+  
+        respondedText = nil
+  
+        local requesting = true
+  
+        while requesting do
+            local event, url, sourceText = os.pullEvent()
+  
+            if event == "http_success" then
+  
+                respondedText = sourceText.readAll()
+  
+  
+                 requesting = false
+  
+            elseif event == "http_failure" then
+  
+                print("Server didn't respond.")
+  
+                requesting = false
+  
+            end
+        end
+  
+        file = io.open("/APIS/fidx", "w")
+        file:write(respondedText)
+        file:close()
+        os.loadAPI("/APIS/fidx")
+    end
+elseif fs.exists("/LNEX/"..sVersion.."/APIS/fidx") then
+    os.loadAPI("/LNEX/"..sVersion.."/APIS/fidx")
+elseif not fs.exists("/LNEX/"..sVersion.."/APIS/fidx") and fs.exists("/LNEX") then
+    error("Specified file: fidx, Is missing! Please reinstall LNEXi.")
+end
+  
+tArgs = {...}
+if tArgs[2] == "true" then
+    term.clear()
+    term.setCursorPos(1,1)
+    shell.run("shell")
+end
+shell.setDir("")
+  
+function createTempDir()
+  if fs.isDir("~temp") then
+    fs.delete("~temp")
+    fs.makeDir("~temp")
+  else
+    fs.makeDir("~temp")
+   end
+end
+  
+rDocsState = false
+rWhiteList = nil
+rBlackList = nil
+  
+--Place Here
+ while not rDocsState do
+    if fs.exists("LNEX") then
+        if not fs.exists("/LNEX/Client-DB/security/config") then
+            term.clearLine()
+            term.write("No config profiles loaded: Creating now...")
+            sleep(1)
+            file = io.open("/LNEX/Client-DB/security/config", "w")
+            local contentManager = "enabled = true"
+            file:write(contentManager)
+            file:close()
+            rDocState = true
+            sleep(.1)
+        else
+            shell.run("/LNEX/"..sVersion.."/security/config")
+            if not enabled == true then
+                term.setCursorPos(1,1)
+                shell.run("shell")
+            else
+                break
+            end
+        end
+        if not fs.exists("/LNEX/Client-DB/security/rBlackList") then
+            term.write("No blacklist profile loaded: Creating now with defaults...")
+            sleep(1)
+            file = io.open("/LNEX/Client-DB/security/rBlackList","w")
+            local contentManager = "prohib = {'shell.run('shell')','shell.run('lua')}"
+            file:write(contentManager)
+            file:close()
+            rDocsState = true
+            sleep(.1)
+        end
+        break
+    else
+        if not fs.exists(shell.dir().."/config") then
+            term.clearLine()
+            term.write("No config profiles loaded: Creating now...")
+            sleep(1)
+            file = io.open(shell.dir().. "/config", "w")
+            local contentManager = "enabled = true"
+            file:write(contentManager)
+            file:close()
+            rDocsState = true
+            shell.run(shell.dir().."/config")
+        else
+            shell.run(shell.dir().."/config")
+            if not enabled == true then
+                term.setCursorPos(1,1)
+                shell.run("shell")
+            else
+                break
+            end
+            rDocsState = true
+        end
+        if not fs.exists(shell.dir().."/rBlackList") then
+            term.write("No blacklist profile loaded: Creating now with defaults...")
+            sleep(1)
+            file = io.open(shell.dir().."/rBlackList","w")
+            local contentManager = "prohib = {'shell.run('shell')','shell.run('lua')}"
+            file:write(contentManager)
+            file:close()
+            rDocsState = true
+            sleep(.1)
+            break
+        end
+    end
+    sleep(.1)
+end
+ 
+  
+curProf = tArgs[1]
+if curProf == nil then
+    shell.setDir("")
+    error("No profile loaded! Quiting")
+end
+  
+if not fs.isDir(curProf) then
+    fs.makeDir(curProf)
+end
+  
+shell.setDir(curProf)
+localDir = shell.dir()
+  
+  
+if not term.isColor() then
+  print("Advanced Computers Only!")
+  return false
+end
+  
+function resetColor()
+    term.setTextColor(colors.yellow)
+    term.setBackgroundColor(colors.black)
+end
+  
+resetColor()
+  
+function getCustomProg(dir, prog)
+    local curDur = shell.dir()
+    shell.setDir(dir)
+        if fs.exists(prog) then
+            shell.setDir(curDur)
+            return true
+        else
+            shell.setDir(curDur)
+            return false
+        end
+end
+  
+--Resolves the program to a local or a root program
+function resolve(prog)
+    local tempDir = shell.resolveProgram(prog)
+    if fs.exists("/rom/programs/"..prog) or prog == "ls" or prog == "rm" or prog == "dir" or prog == "cp" or prog == "mv" then
+        return true
+    elseif fs.exists("/"..prog) then
+        return false
+    else
+        return false
+    end
+end
+  
+function getEntered(s)
+    local cmd = {}
+    c = 1
+    for w in string.gmatch(s, "%a+") do
+        cmd[c] = w
+        c=c+1
+    end
+    gcmd = cmd[1]
+    if gcmd == nil then
+        return
+    end
+    local spcs = {}
+    sv = 1
+    for w in string.gmatch(s, "%s+") do
+        spcs[sv] = w
+        sv=sv+1
+    end
+    numArgs = #spcs
+    if #spcs == nil  then
+        return gcmd
+    end
+    local margs = {}
+    a = 1
+    for w in string.gmatch(s, "%p.*") do
+        margs[a] = w
+        a=a+1
+    end
+    local args = {}
+    if margs[1] == nil then
+        a = 1
+        if s ~= nil then
+            ns = string.gsub(s, gcmd,"")
+        end
+        for w in string.gmatch(ns, "%a+") do
+            args[a] = w
+            a=a+1
+        end
+        cWh = #args
+        wh = numArgs - #args
+        if #args ~= numArgs then
+            if args[1] ~= nil then
+                fc = string.gsub(ns, args[1],"")
+                if wh >= 2 then
+                    for i=0,numArgs-wh do
+                        if fc ~= nil and args[i] ~= nil then
+                            fc = string.gsub(fc, args[i],"")
+                        end
+                    end
+                end
+            end
+            for w in string.gmatch(ns, "%s%d+") do
+                args[a] = w
+                a=a+1
+            end
+            for z=cWh+1,wh+1 do
+                if args[z] == nil then
+                    return gcmd,args
+                end
+                args[z] = string.gsub(args[z]," ","")
+            end
+        end
+        --[[local fiArgs = {}
+        fi = 1
+        for w in string.gmatch(s, "%s%a+") do
+            fiArgs[fi] = w
+            fi=fi+1
+        end]]
+    else
+        ai = 1
+        for w in string.gmatch(s, "%p%a+") do
+            args[ai] = w
+            ai=ai+1
+        end
+    end
+    return gcmd, args
+end
+  
+term.clear()
+term.setCursorPos(1,1)
+print(os.version().." Restricted")
+  
+function exeCmd(cmd,args,prevDir)
+    if cmd == nil or cmd == true then
+        return
+    end
+    ret = false
+    if prevDir ~= nil then ret = true end
+    if #args == 0 then
+        args = nil
+    end
+    local usrDir = shell.dir()
+  
+  
+    if not resolve(cmd) then
+        pathTp = shell.dir().."/"..cmd
+        if fs.exists("/LNEX/Client-DB/security/rBlackList") then
+            shell.run("/LNEX/Client-DB/security/rBlackList")
+        else
+            shell.run("rBlackList")
+        end
+        fidx.contains(pathTp,prohib)
+        term.setTextColor(colors.red)
+        print("Policy Error: External Shell Call Identified in ("..cmd.."): Denying execution.")
+        return
+    end
+  
+  
+    if cmd == "clear" then
+        term.clear()
+        term.setCursorPos(1,1)
+        print(os.version().." Restricted")
+    end
+    if cmd == "shell" then
+        term.setTextColor(colors.red)
+        print("Denied")
+        resetColor()
+    end
+    if cmd == "cd" and args ~= nil then
+        if args[1] == "u" and ret == false then
+            shell.run("cd", "..")
+            gtdir = string.find(shell.dir(),localDir)
+            if gtdir == nil then
+                shell.setDir(localDir)
+            end
+            return
+        elseif args[1] == "u" and ret == true then
+            if shell.dir() == "disk" then
+                shell.setDir(prevDir)
+                prevDir = nil
+            else
+                shell.run("cd","..")
+            end
+            return
+        end
+        if args[1] == "ddisk" then
+            if fs.exists("disk") then
+                cD = shell.dir()
+                shell.setDir("disk")
+                return cD
+            else
+                term.setTextColor(colors.red)
+                print("No disk loaded!")
+                resetColor()
+                return
+            end
+        end
+        if args[1] == "/" then
+            term.setTextColor(colors.red)
+            print("Directory Restricted")
+            resetColor()
+        end
+    end
+    if args == nil then
+        if cmd ~= "shell" then
+            shell.run(cmd)
+        end
+    elseif cmd == "shell" then
+      
+    else
+        if #args == 1 then
+            shell.run(cmd,args[1])
+        elseif #args == 2 then
+            shell.run(cmd,args[1],args[2])
+        elseif #args == 3 then
+            shell.run(cmd,args[1],args[2],args[3])
+        elseif #args == 4 then
+            shell.run(cmd,args[1],args[2],args[3],args[4])
+        end
+    end
+    if getCustomProg(shell.dir(),cmd) then
+        shell.setDir(usrDir)
+    end
+    if shell.dir() == "/" or shell.dir() == "" then
+        shell.setDir(usrDir)
+    end
+    if string.find(shell.dir(), curProf) == nil then
+        term.setTextColor(colors.red)
+        print("File containment: Unauthorized execution of (" ..cmd.."). Escape locked directory!")
+        resetColor()
+        shell.setDir(usrDir)
+    end
+    resetColor()
+end
+  
+createTempDir()
+  
+while true do
+    resetColor()
+    local args = {}
+    
+    term.write(shell.dir().."> ")
+    cr = read()
+    local c,args = getEntered(cr)
+    if prevDir ~= nil then
+        exeCmd(c,args,prevDir)
+    else
+        prevDir = exeCmd(c,args,nil)
+    end
+      
+    if shell.dir() == prevDir then
+        prevDir = nil
+    end
+      
+    sleep(.0001)
+end
