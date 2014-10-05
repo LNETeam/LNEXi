@@ -1,0 +1,7 @@
+install = {
+  warnInflate = true,
+  Dependencies = {},
+  PostAction = function() end,
+  
+}
+return install
