@@ -1,0 +1,242 @@
+os.loadAPI("/LNEX/Server/APIS/ip")
+ 
+function os.pullEvent()
+    local cEvent, carp, p2, p3, p4, p5 = os.pullEventRaw()
+        if cEvent == "terminate" then
+        end
+    return cEvent, carp, p2, p3, p4, p5
+end
+ 
+serverRun = true
+ 
+dCheck = {}
+dCheck[1] = "top"
+dCheck[2] = "bottom"
+dCheck[3] = "left"
+dCheck[4] = "right"
+dCheck[5] = "front"
+dCheck[6] = "back"
+ 
+for n = 1,#dCheck do
+        if peripheral.isPresent(dCheck[n]) and peripheral.getType(dCheck[n]) == "modem" then
+            rednet.open(dCheck[n])
+        end
+end
+ 
+function checkServer()
+    write("Start with maintainence?: ")
+    it = read()
+    if it == "y" or it == "Y" then
+        term.clear()
+        return "main"
+    end
+    if fs.exists("/LNEX/Server/CompServe") then
+        if fs.exists("/LNEX/Server/APIS") then
+            if fs.exists("/LNEX/Server/APIS/WFCI") and fs.exists("/LNEX/Server/APIS/WPCI") and fs.exists("/LNEX/Server/APIS/WAPI") and fs.exists("/LNEX/Server/APIS/WNIL") then
+                if serverRun == true then
+                    return true
+                else
+                    return false
+                end
+            else
+                return false
+            end
+        else
+            return false
+        end
+    else
+        return false
+    end
+end
+ 
+function placeAcc(pass , compi)
+    if fs.exists("/LNEX/Server/CompServe/" .. compi) then
+        hpath = "/LNEX/Server/CompServe/" .. compi
+        shell.run(hpath)    
+        if #passw == 0 then
+            file = io.open(hpath , "w")
+            local nnum = #passw + 1
+            file:write("passw = {}")
+            file:write("\npassw[" ..nnum.. "] = '".. pass .."'")
+            file:close()
+        else
+            file = io.open(hpath , "w")
+            nnum = #passw + 1
+            file:write("passw = {}")
+            for i = 1,#passw do
+                local curpass = passw[i]
+                file:write("\npassw[" ..i.. "] = '" .. curpass.."'")
+            end
+            file:write("\npassw[" ..nnum.. "] = '".. pass .."'")
+        end
+        file:close()
+        shell.run("/LNEX/Server/CompServe/" .. compi)
+        if passw[nnum] == pass then
+            return true
+        else
+            return false
+        end
+    else
+        file = io.open("/LNEX/Server/CompServe/" .. compi , "w")
+        file:write("passw = {}")
+        file:close()
+        placeAcc(pass , compi)
+    end
+end
+ 
+function sendAcc(compi)
+    ting = readAccData(compi)
+    rednet.send(compi , ting)
+    print("Account Sent at " ..os.time().. " to " ..compi)
+end
+ 
+function acce(compi)
+    print("\nGot Auth Request")
+    if fs.exists("/LNEX/Server/CompServe/" .. compi) == true then
+        print("\Auth Accepted")
+        shell.run("/LNEX/Server/CompServe/" .. compi)
+        print("\nAuth Ran")
+        if fs.exists("/LNEX/Server/CompServe/" .. compi) == true and #passw <= 5 then
+            return true
+        else
+            return false
+        end
+    else
+        return false
+    end
+end
+ 
+function acceN(compi)
+    if fs.exists("/LNEX/Server/CompServe/" .. compi) == true then
+        shell.run("/LNEX/Server/CompServe/" .. compi)
+        if fs.exists("/LNEX/Server/CompServe/" .. compi) == true and #passw >= 5 then
+            return true
+        else
+            return false
+        end
+    else
+        return false
+    end
+end
+ 
+--[[
+function edCount(pass , edvar , compi)
+    if edvar == 1 then
+        local file = io.open("/LNEX/Server/accounts/" .. compi , "r")
+        local cp = file:read()
+        file:close()
+        if pass == cp then
+            return true
+        else
+            return false
+        end
+    elseif edvar == 2 then
+        local file = io.open("/LNEX/Server/accounts/" .. compi , "w+")
+        file:write(pass)
+        file:close()
+        return true
+    end
+end]]
+ 
+function readAccData(init)
+    shell.run("/LNEX/Server/CompServe/" .. init)
+    if #passw >= 1 then
+        comp = {}
+        for i = 1,#passw do
+            comp[i] = passw[i]
+        end
+        tcomp = textutils.serialize(comp)
+        ip.errCheckInv(tcomp , "nil")
+        if tcomp == nil then return false end
+        print("\nAccount Read: Sending to " ..init)
+        print(tcomp)
+        return tcomp
+    end
+end
+ 
+ 
+function server()
+    id  = os.getComputerID()
+    sm = checkServer()
+        if sm == true then
+            state = true
+            term.clear()
+        elseif sm == "main" then
+            state = false
+            term.clear()
+        else
+            state = false
+        end
+    while serverRun == true do
+        term.setTextColor(colors.white)
+        output = state and "Open and Servicing" or "Closed for Maintainence or Error"
+        textColor = state and colors.green or colors.red
+        term.setCursorPos(1,1)
+        term.write("Server ID: " ..id)
+        print(" ")
+        print(" ")
+        term.setTextColor(colors.white)
+        term.write("Server status: ")
+        term.setTextColor(textColor)
+        term.write(output)
+        if state == false then
+            os.pullEvent("key")
+            term.clear()
+            term.setCursorPos(1,1)
+            serverRun = false
+            return
+        end
+        local p1, p2 = rednet.receive()
+            local sendid = p1
+            if p2 == "$-*" then
+                rednet.send(sendid , "get")
+                local p1, p = rednet.receive()
+                newacc = p
+                sendid = p1
+                tem = tonumber(sendid)
+                if placeAcc(newacc , tem) == true then
+                    rednet.send(sendid , "success")
+                else
+                    rednet.send(sendid , "failure")
+                end
+            elseif p2 == "req" then
+                if acce(tonumber(p1)) == true then
+                    rednet.send(sendid , "true")
+                    repeat
+                        p1 , p2 = rednet.receive(2) --or whatever timeout you like
+                    until p1 and p1 == sendid
+                    sendAcc(p1)
+                else
+                    rednet.send(sendid , "false")
+                end
+            elseif p2 == "is" then
+                if acceN(p1) == true then
+                    rednet.send(p1 , "true")
+                else
+                    rednet.send(p1 , "false")
+                end
+            elseif p2 == "edit" then
+                local p1, p2 = rednet.receive()
+                curpass = p2
+                if edCount(curpass , 1 , p1) == true then
+                    rednet.send(p1 , "true")
+                else
+                    rednet.send(p1 , "false")
+                end
+                local p1, p2 = rednet.receive()
+                npass = p2
+                if edCount(npass , 2 , p1) == true then
+                    rednet.send(p1 , "true")
+                end
+            end
+        sleep(.0000000001)
+    end
+end
+ 
+if serverRun == false and maintRun == false then
+    print("err1")
+    os.pullEvent("key")
+    os.reboot()
+end
+ 
+server()
