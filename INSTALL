@@ -15,7 +15,7 @@ install = {}
     {"/CORE/packages/Client-DB/start/startup","/CORE/packages/Client-DB/start/startup"},
     {"/CORE/packages/Client-DB/start/uninstall","/CORE/packages/Client-DB/start/uninstall"},
     {"/CORE/packages/Client-SA/APIS/WAPI","/CORE/packages/Client-SA/APIS/WAPI"},
-    {"/CORE/packages/Client-SA/APIS/WFCI",/CORE/packages/Client-SA/APIS/WFCI"},
+    {"/CORE/packages/Client-SA/APIS/WFCI","/CORE/packages/Client-SA/APIS/WFCI"},
     {"/CORE/packages/Client-SA/APIS/WNIL","/CORE/packages/Client-SA/APIS/WNIL"},
     {"/CORE/packages/Client-SA/APIS/WPCI","/CORE/packages/Client-SA/APIS/WPCI"},
     {"/CORE/packages/Client-SA/APIS/ip","/CORE/packages/Client-SA/APIS/ip"},
