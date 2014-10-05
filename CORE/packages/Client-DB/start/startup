@@ -1,0 +1,23 @@
+dCheck = {}
+dCheck[1] = "top"
+dCheck[2] = "bottom"
+dCheck[3] = "left"
+dCheck[4] = "right"
+dCheck[5] = "front"
+dCheck[6] = "back"
+ 
+for n = 1,#dCheck do
+     if peripheral.isPresent(dCheck[n]) and peripheral.getType(dCheck[n]) == "modem" then
+    rednet.open(dCheck[n])
+        end
+end
+ 
+if fs.exists ("/LNEX") then
+        if fs.exists("/LNEX/Client-DB/secpref/secprefa") then
+            shell.run("/LNEX/Client-DB/secpref/secprefa")
+        else
+            shell.run("/LNEX/Client-DB/Client/LNEX") 
+        end
+else
+    fs.delete("startup")
+end
