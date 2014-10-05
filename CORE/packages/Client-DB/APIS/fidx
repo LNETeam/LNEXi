@@ -1,0 +1,43 @@
+-----------------------------------
+-----Written and Developed by:-----
+---------LNET Technoligies---------
+-----------------------------------
+ 
+--Method to identify strings within a file's lines of code: Usage: fidx.contains("path to file", "string to check for"). Ex: fidx.contains("/startup", "shell.run("shell")")
+ 
+function contains(file, black)
+    if not fs.exists(file) then
+        return false
+    end
+    f = io.open(file, "r")
+    fr = f.readAll()
+    for i,v in ipairs(black) do
+        if not string.find(fr,v) == nil then
+            return true
+        else
+            return false
+        end
+    end
+end
+ 
+function getDirs(path)
+    sIndex = {}
+    dIndex = {}
+ 
+    sIndex = shell.list(path)
+    for _, dirs in ipairs(sIndex) do
+        if fs.isDir(dirs) then
+            dIndex[#dIndex+1] = dirs
+        end
+    end
+ 
+    if #dIndex == 0 then
+        return false
+    end
+ 
+    return dIndex
+end
+ 
+function searchPath()
+ 
+end
