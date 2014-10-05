@@ -1,0 +1,88 @@
+function os.pullEvent()
+    local cEvent, p1, p2, p3, p4, p5 = os.pullEventRaw()
+        if cEvent == "terminate" then
+        end
+    return cEvent, p1, p2, p3, p4, p5
+end
+ 
+term.clear()
+term.setCursorPos(1,1)
+if fs.exists("/LNEX/Client-DB") then
+file = io.open("/LNEX/Client-DB/connect-info/id" , "r")
+ci = file:read()
+file:close()
+cs = tonumber(ci)
+end
+ 
+ 
+function getRight(sLin)
+    local nWidth = term.getSize()
+    local x = math.floor(nWidth) - string.len(sLin) 
+    return x + 1
+end
+ 
+function getCurP(cur)
+    if fs.exists("/LNEX/Client-DB") then
+        rednet.send(cs , "edit")
+        rednet.send(cs , cur)
+        event , p1 , p2 = os.pullEvent("rednet_message")
+        if p2 == "true" then
+            return true
+        else
+            return false
+        end
+    elseif fs.exists("/LNEX/Client-SA") then
+        file = io.open("/LNEX/Client-SA/data/retrieve/passuid" , "r")
+        pass = file:read()
+        file:close()
+        if pass == cur then
+            return true
+        else
+            return false
+        end
+    end
+end
+ 
+function repl(newp)
+    if fs.exists("/LNEX/Client-DB") then
+        rednet.send(cs , newp)
+    elseif fs.exists("/LNEX/Client-SA") then
+        file = io.open("/LNEX/Client-SA/data/retrieve/passuid" , "w+")
+        file:write(newp)
+        file:close()
+    end
+end
+ 
+function editProf()
+    local nWidth , nHeight = term.getSize()
+    local y = nHeight
+    local x = getRight("LNET Technologies")
+    term.setCursorPos(x , y)
+    term.write("LNET Technologies")
+    term.setCursorPos(1,1)
+    term.write("Current Password: ")
+    cp = read("*")
+    print(" ")
+    print(" ")
+    write("New Password: ")
+    np = read("*")
+    write("Confirm New Password: ")
+    cnp = read("*")
+    if getCurP(cp) == true and np == cnp then
+        repl(np)
+                term.clear()
+                term.setCursorPos(1,1)
+                term.write("Change Completed")
+                os.pullEvent("key")
+                term.clear()
+                term.setCursorPos(1,1)
+    else
+        term.clear()
+        term.setCursorPos(1,1)
+        term.write("Credentials Error")
+        os.pullEvent("key")
+                term.clear()
+    end
+end
+ 
+editProf()
