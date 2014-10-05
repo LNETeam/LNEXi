@@ -1,0 +1,21 @@
+dCheck = {}
+dCheck[1] = "top"
+dCheck[2] = "bottom"
+dCheck[3] = "left"
+dCheck[4] = "right"
+dCheck[5] = "front"
+dCheck[6] = "back"
+ 
+for n = 1, #dCheck do
+    disk.eject(dCheck[n])
+end
+ 
+if fs.exists ("/LNEX") then
+        if fs.exists("/LNEX/Client-SA/secpref/secprefa") then
+            shell.run("/LNEX/Client-SA/secpref/secprefa")
+        else
+            shell.run("LNEX/Client-SA/Client/LNEX")
+        end
+else
+    fs.delete("startup")
+end
