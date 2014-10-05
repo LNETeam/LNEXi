@@ -1,0 +1,8 @@
+function isClicked(mx , my , tString , sx , sy)
+    l = string.len(tString)
+    if my == sy then
+            if mx>=sx and mx<=l then
+                return true
+            end
+    end
+end
