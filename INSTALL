@@ -26,6 +26,6 @@ install = {}
     {"/CORE/packages/Server/files/host","/CORE/packages/Server/files/host"},
     {"/CORE/packages/Server/start/startup","/CORE/packages/Server/start/startup"},
     {"/CORE/packages/support/RestriHelp","/CORE/packages/support/RestriHelp"},
-    {"/startup","/startup"},
+    {"/startup","/startup"}
   }
 return install
