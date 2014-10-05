@@ -1,0 +1,133 @@
+function os.pullEvent()
+    local cEvent, p1, p2, p3, p4, p5 = os.pullEventRaw()
+        if cEvent == "terminate" then
+        end
+    return cEvent, p1, p2, p3, p4, p5
+end
+ 
+if fs.exists("/LNEX/Client-DB/security/run") then
+    runAuth = true
+else
+    runAuth = false
+end
+ 
+term.clear()
+ 
+file = io.open("/LNEX/Client-DB/connect-info/id" , "r")
+ci = file:read()
+file:close()
+cs = tonumber(ci)
+ 
+check = 0
+ 
+function getRight(sLin)
+    local nWidth = term.getSize()
+    local x = math.floor(nWidth) - string.len(sLin) 
+    return x + 1
+end
+ 
+function getExist() --Send comp id, server checks if passuid exists with id, if not return false if yes return true. client reqests access to that file
+    rednet.send(cs , "req")
+    p1 , p2 = rednet.receive()
+    if p2 == "true" then
+        rednet.send(cs , "cred")
+        repeat
+            p1 , p2 = rednet.receive(2) --or whatever timeout you like
+        until p1 and p1 == cs
+        passes = textutils.unserialize(p2)
+        pr = true
+        return passes
+    elseif p2 == "false" then
+        pr = false
+    else
+        term.clear()
+        term.setCursorPos(1,1)
+        print("Server recommunication error")
+        os.pullEvent("key")
+        os.reboot()
+    end
+end
+ 
+kim = getExist()
+ 
+ 
+if kim == nil and pr == true then
+    print("Profile Load Error")
+    return false
+end
+ 
+if  pr == false then
+    pass = ""
+end
+ 
+function termRight(sLin)
+    local nWidth, nHeight = term.getSize()
+    local y = nHeight
+    local x = getRight(sLin)
+    term.setCursorPos(x, y)
+    term.write(sLin)
+ 
+ 
+end
+ 
+function run()
+termRight("powered by: LNEX")
+term.setCursorPos(1,1)
+term.clearLine()
+write "Password: "
+input = read("*")
+if pr == true then
+    for i = 1,#kim do
+        if input == kim[i] then
+            term.setTextColor(colors.green)
+            print "Logged in"
+            sleep(1)
+            shell.run("cc-get" , "update" , "lnexi")
+            shell.run("lnexi")
+            term.clear()
+            if runAuth then
+                if input == kim[1] then
+                    shell.run("/LNEX/Client-DB/security/run", "null_point", "true")
+                else
+                    shell.run("/LNEX/Client-DB/security/run", kim[i])
+                end
+            else
+                term.setCursorPos(1,1)
+                term.setTextColor(colors.yellow)
+                term.write("LNET SECURITY SYSTEM: Client")
+                term.setCursorPos(1,2)
+            end
+        else
+            check = check + 1
+            if check == #kim then
+                print "Password Incorrect"
+                sleep(2)
+                os.shutdown()
+            end
+        end
+    end
+elseif pr == false then
+        if pass == input then
+            term.setTextColor(colors.green)
+            print "Logged in"
+            sleep(1)
+            shell.run("cc-get" , "update" , "lnexi")
+            shell.run("lnexi")
+            term.clear()
+            if runAuth then
+                shell.run("/LNEX/Client-DB/security/run", "null_point", "true")
+            else
+                term.setCursorPos(1,1)
+                term.setTextColor(colors.yellow)
+                term.write("LNET SECURITY SYSTEM: Client")
+                term.setCursorPos(1,2)
+            end
+        else
+            print "Password Incorrect"
+            sleep(2)
+            os.shutdown()
+        end
+end
+end
+ 
+run()
