@@ -1,5 +1,5 @@
 os.loadAPI("/LNEX/Server/APIS/ip")
- 
+local isColor = term.isColor()
 function os.pullEvent()
     local cEvent, carp, p2, p3, p4, p5 = os.pullEventRaw()
         if cEvent == "terminate" then
@@ -168,16 +168,24 @@ function server()
             state = false
         end
     while serverRun == true do
+    if color then
         term.setTextColor(colors.white)
+        end
         output = state and "Open and Servicing" or "Closed for Maintainence or Error"
+        if color then
         textColor = state and colors.green or colors.red
+        end
         term.setCursorPos(1,1)
         term.write("Server ID: " ..id)
         print(" ")
         print(" ")
+        if color then
         term.setTextColor(colors.white)
+        end
         term.write("Server status: ")
+        if color then
         term.setTextColor(textColor)
+        end
         term.write(output)
         if state == false then
             os.pullEvent("key")
