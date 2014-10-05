@@ -1,0 +1,22 @@
+function isClicked(mx , my , tString , sx , sy)
+    l = string.len(tString)
+    if my == sy then
+            if mx>=sx and mx<=l then
+                return true
+            end
+    end
+end
+ 
+function errCheck(eqv1 , eqv2)
+    if eqv2 == "nil" then
+        assert(eqv1 == nil, "Error raised on: "..eqv1.."and "..eqv2)
+    end
+    assert(eqv1 == eqv2, "Error raised on: "..eqv1.."and "..eqv2)
+end
+ 
+function errCheckInv(eqv1 , eqv2)
+    if eqv2 == "nil" then
+        assert(eqv1 ~= nil, "Error raised on: "..eqv1.."and "..eqv2)
+    end
+    assert(eqv1 ~= eqv2, "Error raised on: "..eqv1.."and "..eqv2)
+end
