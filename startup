@@ -77,7 +77,7 @@ function runMenu(mChoices, sMenuTitle)
 				elseif nKey == 28 then
 					if mChoices[nSelection] then
 						bLoop = false
-dreturn nSelection
+return nSelection
 					end
 				end
 			end
