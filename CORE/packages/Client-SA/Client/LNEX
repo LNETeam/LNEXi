@@ -1,0 +1,49 @@
+os.pullEvent = os.pullEventRaw
+ 
+term.clear()
+ 
+function getRight(sLin)
+    local nWidth = term.getSize()
+    local x = math.floor(nWidth) - string.len(sLin) 
+    return x + 1
+end
+ 
+if  fs.exists("LNEX/Client-SA/data/retrieve/passuid") == true then
+    file = io.open("/LNEX/Client-SA/data/retrieve/passuid" , "r")
+    pass = file:read()
+    file:close()
+else
+    pass = ""
+end
+ 
+function termRight(sLin)
+    local nWidth, nHeight = term.getSize()
+    local y = nHeight
+    local x = getRight(sLin)
+    term.setCursorPos(x, y)
+    term.write(sLin)
+ 
+ 
+end
+ 
+termRight("powered by: LNEX")
+term.setCursorPos(1,1)
+term.clearLine()
+write "Password: "
+input = read("*")
+if pass == input then
+term.setTextColor(colors.green)
+print "Logged in"
+sleep(2)
+shell.run("cc-get" , "update" , "lnexi")
+term.clear()
+term.setCursorPos(1,1)
+term.setTextColor(colors.yellow)
+term.write("LNET SECURITY SYSTEM: Client")
+term.setCursorPos(1,2)
+ 
+else
+print "Password Incorrect"
+sleep(2)
+os.shutdown()
+end
