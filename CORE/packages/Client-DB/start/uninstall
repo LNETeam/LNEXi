@@ -1,0 +1,139 @@
+function os.pullEvent()
+    local cEvent, p1, p2, p3, p4, p5 = os.pullEventRaw()
+        if cEvent == "terminate" then
+        end
+    return cEvent, p1, p2, p3, p4, p5
+end
+ 
+file = io.open("/LNEX/Client-DB/connect-info/id" , "r")
+ci = file:read()
+file:close()
+cs = tonumber(ci)
+ 
+function getCenterX(sText)
+local nWidth = term.getSize()
+local x = math.floor(nWidth / 2) - math.floor(string.len(sText) / 2)
+return x
+end
+ 
+function getCenterY()
+    local nWidth, nHeight = term.getSize()
+    local y = math.floor(nHeight / 2)
+    return y
+end
+ 
+function getRight(sText)
+    local nWidth = term.getSize()
+    local x = nWidth - string.len(sText)
+    return x + 1
+end
+ 
+function delServ()
+    rednet.send(cs , "un")
+end
+ 
+function runMenu(mChoices, sMenuTitle)
+    local nSelection = 0
+    local bLoop = true
+     
+    while bLoop == true do
+        term.clear()
+        term.setCursorPos(1, 1)
+        print(sMenuTitle)
+        print()
+     
+        for nLine = 0, #mChoices do
+            local sLine = "  "
+            if nSelection == nLine then
+                sLine = "> "
+            end
+            sLine = sLine .. mChoices[nLine]
+            print(sLine)
+        end
+         
+        local nWidth, nHeight = term.getSize()
+        local y = nHeight
+        local x = getRight("LNET Technologies")
+        term.setCursorPos(x, y)
+        term.write("LNET Technologies")
+         
+        local sEvent, nKey = os.pullEvent("key")
+         
+        if nKey == 200 then
+            if mChoices[nSelection - 2] then
+                nSelection = nSelection - 2
+            end
+        elseif nKey == 208 then
+            if mChoices[nSelection + 2] then
+                nSelection = nSelection + 2
+            end
+        elseif nKey == 28 then
+            if mChoices[nSelection] then
+                bLoop = false
+                return nSelection
+            end
+        end
+    end
+end
+ 
+function menu()
+    repeat
+        if nMenuNum == 0 then
+            mChoices = {}
+            mActions = {}
+            mChoices[0] = "Uninstall"  
+            mChoices[1] = " "
+            mChoices[2] = "Cancel"
+            mActions[0] = function() nMenuNum = 1 end
+            mActions[2] = function()
+                os.reboot()
+            end
+            local nSelection = runMenu(mChoices, "Uninstall LNEX Software?")
+            mActions[nSelection]()
+        elseif nMenuNum == 1 then
+            term.clear()
+            local nWidth , nHeight = term.getSize()
+            local y = getCenterY()
+            local  x = getCenterX("Please wait...")
+            term.setCursorPos(x + 1 , y)
+            term.write("Please wait...")
+            local sTime = os.clock()
+            term.setCursorPos(1, y + 2)
+            term.write("Uninstalling: LNEX System Root...")
+            print(" ")
+            sleep(.5)
+            fs.delete("/LNEX")
+            sleep(.6)
+            term.write("Uninstalling: Startup Protocols")
+            print(" ")
+            sleep(.5)
+            fs.delete("/startup")
+            term.write("Uninstalling: Server Connections")
+            print(" ")
+            sleep(.6)
+            textutils.slowWrite("Finishing...")
+            sleep(2)
+            eTime = os.clock()
+            ns = tonumber(sTime)
+            ne = tonumber(eTime)
+            ftime = ne - ns
+            term.clear()
+            term.setCursorPos(1,1)
+            term.write("Time to uninstall: " ..ftime.. " sec")
+            print(" ")
+            print("System needs to restart to make changes.") 
+            print("Press any key to continue...")
+            os.pullEvent("key")
+            fs.delete("uninstall")
+            bMenuLoop = false
+        end
+    until bMenuLoop == false
+end
+ 
+bMenuLoop = true
+nMenuNum = 0
+mChoices = {}
+mActions = {}
+menu()
+ 
+os.reboot()
