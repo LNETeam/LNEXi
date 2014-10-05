@@ -1,0 +1,30 @@
+==========================================
+RestriShell Developed by LNET Technologies
+==========================================
+ 
+Product Name: "RestriShell"
+Build: 1.0
+Publisher: "LNET Technologies"
+Assc: "LNEXi Security System"
+ 
+Usage: />run [profile] [*true/false]
+ 
+*Enables disbles the RestriShell for the specified user
+ 
+What is this?: RestriShell is a plugin for LNEXi Security System that creates a restricted shell for the created user.
+ 
+Features: -Temporary Directories created on load
+          -Unique users, prevents cross user file access
+          -Disabled shell
+          -Disk accessability
+          -Auto-program directory reset (After completion of custom program, system checks to see if the directory has changed since the code has been executed)
+          -FIDX File Index API (Allows for indexing of things in a file. Ex: Checking for "shell.run" commands in a file)
+          -Enable/Disable config file
+          -Whitelisting programs
+          -Root access disabled, except for admins
+          -Configurable blacklisting
+ 
+Dependencies: "FIDX API, *config, *bl,*wl"
+*Auto-generated upon absence
+ 
+Installation: "Available for download on CC-Forums or through LNEXi Security System"
