@@ -1,8 +1,6 @@
-install = {
-  warnInflate = true,
-  Dependencies = {},
-  PostAction = function() os.reboot() end,
-  InstallHierarchy = 
+install = {}
+  install.Dependencies = {}
+  install.InstallHierarchy = 
   {
     {"/CORE/packages/Client-DB/APIS/WAPI","/CORE/packages/Client-DB/APIS/WAPI"},
     {"/CORE/packages/Client-DB/APIS/WFCI",/CORE/packages/Client-DB/APIS/WFCI"},
@@ -29,7 +27,5 @@ install = {
     {"/CORE/packages/Server/start/startup","/CORE/packages/Server/start/startup"},
     {"/CORE/packages/support/RestriHelp","/CORE/packages/support/RestriHelp"},
     {"/startup","/startup"},
-  },
-  
-}
+  }
 return install
