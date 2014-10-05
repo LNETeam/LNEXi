@@ -3,7 +3,7 @@ install = {}
   install.InstallHierarchy = 
   {
     {"/CORE/packages/Client-DB/APIS/WAPI","/CORE/packages/Client-DB/APIS/WAPI"},
-    {"/CORE/packages/Client-DB/APIS/WFCI",/CORE/packages/Client-DB/APIS/WFCI"},
+    {"/CORE/packages/Client-DB/APIS/WFCI","/CORE/packages/Client-DB/APIS/WFCI"},
     {"/CORE/packages/Client-DB/APIS/WNIL","/CORE/packages/Client-DB/APIS/WNIL"},
     {"/CORE/packages/Client-DB/APIS/WPCI","/CORE/packages/Client-DB/APIS/WPCI"},
     {"/CORE/packages/Client-DB/APIS/fidx","/CORE/packages/Client-DB/APIS/fidx"},
