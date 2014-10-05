@@ -1,7 +1,35 @@
 install = {
   warnInflate = true,
   Dependencies = {},
-  PostAction = function() end,
-  InstallHierarchy = {},
+  PostAction = function() os.reboot() end,
+  InstallHierarchy = 
+  {
+    {"/CORE/packages/Client-DB/APIS/WAPI","/CORE/packages/Client-DB/APIS/WAPI"},
+    {"/CORE/packages/Client-DB/APIS/WFCI",/CORE/packages/Client-DB/APIS/WFCI"},
+    {"/CORE/packages/Client-DB/APIS/WNIL","/CORE/packages/Client-DB/APIS/WNIL"},
+    {"/CORE/packages/Client-DB/APIS/WPCI","/CORE/packages/Client-DB/APIS/WPCI"},
+    {"/CORE/packages/Client-DB/APIS/fidx","/CORE/packages/Client-DB/APIS/fidx"},
+    {"/CORE/packages/Client-DB/APIS/ip","/CORE/packages/Client-DB/APIS/ip"},
+    {"/CORE/packages/Client-DB/Client/LNEX","/CORE/packages/Client-DB/Client/LNEX"},
+    {"/CORE/packages/Client-DB/secpref/secprefa","/CORE/packages/Client-DB/secpref/secprefa"},
+    {"/CORE/packages/Client-DB/security/run","/CORE/packages/Client-DB/security/run"},
+    {"/CORE/packages/Client-DB/setup/id","/CORE/packages/Client-DB/setup/id"},
+    {"/CORE/packages/Client-DB/start/startup","/CORE/packages/Client-DB/start/startup"},
+    {"/CORE/packages/Client-DB/start/uninstall","/CORE/packages/Client-DB/start/uninstall"},
+    {"/CORE/packages/Client-SA/APIS/WAPI","/CORE/packages/Client-SA/APIS/WAPI"},
+    {"/CORE/packages/Client-SA/APIS/WFCI",/CORE/packages/Client-SA/APIS/WFCI"},
+    {"/CORE/packages/Client-SA/APIS/WNIL","/CORE/packages/Client-SA/APIS/WNIL"},
+    {"/CORE/packages/Client-SA/APIS/WPCI","/CORE/packages/Client-SA/APIS/WPCI"},
+    {"/CORE/packages/Client-SA/APIS/ip","/CORE/packages/Client-SA/APIS/ip"},
+    {"/CORE/packages/Client-SA/Client/LNEX","/CORE/packages/Client-SA/Client/LNEX"},
+    {"/CORE/packages/Client-SA/secpref/secprefa","/CORE/packages/Client-SA/secpref/secprefa"},
+    {"/CORE/packages/Client-SA/start/startup","/CORE/packages/Client-SA/start/startup"},
+    {"/CORE/packages/Client-SA/start/uninstall","/CORE/packages/Client-SA/start/uninstall"},
+    {"/CORE/packages/Server/files/host","/CORE/packages/Server/files/host"},
+    {"/CORE/packages/Server/start/startup","/CORE/packages/Server/start/startup"},
+    {"/CORE/packages/support/RestriHelp","/CORE/packages/support/RestriHelp"},
+    {"/startup","/startup"},
+  },
+  
 }
 return install
