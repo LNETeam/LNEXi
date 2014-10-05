@@ -2,6 +2,6 @@ install = {
   warnInflate = true,
   Dependencies = {},
   PostAction = function() end,
-  
+  InstallHierarchy = {},
 }
 return install
