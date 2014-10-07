@@ -1,4 +1,6 @@
 install = {}
+  install.expandWarning = true
+  install.uninstaller = "/start/installer"
   install.Dependencies = {}
   install.InstallHierarchy = 
   {
